@@ -11,8 +11,8 @@ class Ball():
     def __init__(self):
         self.x = 0.1 * np.random.randint(-50, 50)
         self.y = 0.1 * np.random.randint(-50, 50)
-        self.vx = 0.1 * np.random.randint(-50, 50)
-        self.vy = 0.1 * np.random.randint(-50, 50)
+        self.vx = 0.05 * np.random.randint(-50, 50)
+        self.vy = 0.05 * np.random.randint(-50, 50)
 
     def update(self, dt):
         self.x += self.vx * dt
@@ -35,6 +35,12 @@ class Ball():
     def velocity_y_update(self):
         self.vy *= -0.1 * np.random.randint(9, 12)
 
+def avoidance(b1, b2):
+    distance = math.sqrt((b1.x-b2.x)**2 + (b1.y-b2.y)**2)
+    if distance < 2.0:
+        b1.velocity_x_update()
+        b1.velocity_y_update()
+
 def update_ani(i):
     ax.cla()
     ax.set_xlim(-5, 5)
@@ -42,6 +48,7 @@ def update_ani(i):
     dt = 0.5
     ball1.update(dt)
     ball2.update(dt)
+    avoidance(ball1, ball2)
     ax.scatter(ball1.x, ball1.y, color="b")
     ax.scatter(ball2.x, ball2.y, color="r")
     

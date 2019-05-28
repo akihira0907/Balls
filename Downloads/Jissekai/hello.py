@@ -4,10 +4,10 @@ import matplotlib.animation as ani
 import math
 
 class Ball():
-    max_x = 5
-    min_x = -5
-    max_y = 5
-    min_y = -5
+    max_x = 7
+    min_x = -7
+    max_y = 7
+    min_y = -7
     def __init__(self):
         self.x = 0.1 * np.random.randint(-50, 50)
         self.y = 0.1 * np.random.randint(-50, 50)
@@ -31,9 +31,9 @@ class Ball():
             self.velocity_y_update()
             
     def velocity_x_update(self):
-        self.vx *= -0.1 * np.random.randint(9, 12)
+        self.vx *= -0.01 * np.random.randint(90, 111)
     def velocity_y_update(self):
-        self.vy *= -0.1 * np.random.randint(9, 12)
+        self.vy *= -0.01 * np.random.randint(90, 111)
 
 def avoidance(b1, b2):
     distance = math.sqrt((b1.x-b2.x)**2 + (b1.y-b2.y)**2)
@@ -43,14 +43,20 @@ def avoidance(b1, b2):
 
 def update_ani(i):
     ax.cla()
-    ax.set_xlim(-5, 5)
-    ax.set_ylim(-5, 5)
-    dt = 0.5
+    ax.set_xlim(-7, 7)
+    ax.set_ylim(-7, 7)
+
+    dt = 0.3
     ball1.update(dt)
     ball2.update(dt)
+    ball3.update(dt)
+
     avoidance(ball1, ball2)
-    ax.scatter(ball1.x, ball1.y, color="b")
-    ax.scatter(ball2.x, ball2.y, color="r")
+    avoidance(ball3, ball2)
+
+    ax.scatter(ball1.x, ball1.y, color="b", s=100)
+    ax.scatter(ball2.x, ball2.y, color="r", s=100)
+    ax.scatter(ball3.x, ball3.y, color="b", s=100)
     
 ############################################################
 ############################################################
@@ -90,6 +96,7 @@ step_text = ax.text(0.05, 0.9, '', transform=ax.transAxes)
 
 ball1 = Ball()
 ball2 = Ball()
+ball3 = Ball()
 
 animation = ani.FuncAnimation(fig, update_ani, interval=50, frames=500)
 plt.show()

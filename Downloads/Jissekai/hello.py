@@ -11,8 +11,9 @@ class Ball():
     def __init__(self):
         self.x = 0.1 * np.random.randint(-50, 50)
         self.y = 0.1 * np.random.randint(-50, 50)
-        self.vx = 0.05 * np.random.randint(-50, 50)
-        self.vy = 0.05 * np.random.randint(-50, 50)
+        self.vx = 0.03 * np.random.randint(-50, 50)
+        self.vy = 0.03 * np.random.randint(-50, 50)
+        self.cnt_of_escape = 0
 
     def update(self, dt):
         self.x += self.vx * dt
@@ -36,27 +37,29 @@ class Ball():
         self.vy *= -0.01 * np.random.randint(90, 111)
 
 def avoidance(b1, b2):
+    b1.cnt_of_escape -= 1
     distance = math.sqrt((b1.x-b2.x)**2 + (b1.y-b2.y)**2)
-    if distance < 2.0:
+    if distance < 2.5 and b1.cnt_of_escape <= 0:
         b1.velocity_x_update()
         b1.velocity_y_update()
+        b1.cnt_of_escape = 5
 
 def update_ani(i):
     ax.cla()
     ax.set_xlim(-7, 7)
     ax.set_ylim(-7, 7)
 
-    dt = 0.3
+    dt = 0.5
     ball1.update(dt)
-    ball2.update(dt)
-    ball3.update(dt)
+    for i in range(1, 5):
+        ball[i].update(dt)
 
-    avoidance(ball1, ball2)
-    avoidance(ball3, ball2)
+    for i in range(1, 5):
+        avoidance(ball[i], ball1)
 
-    ax.scatter(ball1.x, ball1.y, color="b", s=100)
-    ax.scatter(ball2.x, ball2.y, color="r", s=100)
-    ax.scatter(ball3.x, ball3.y, color="b", s=100)
+    ax.scatter(ball1.x, ball1.y, color="r", s=100)
+    for i in range(1, 5):
+        ax.scatter(ball[i].x, ball[i].y, color="b", s=100)
     
 ############################################################
 ############################################################
@@ -94,9 +97,11 @@ ax.grid(True) # グリッド
 # ステップ数表示
 step_text = ax.text(0.05, 0.9, '', transform=ax.transAxes)
 
-ball1 = Ball()
-ball2 = Ball()
-ball3 = Ball()
+ball1 = Ball() # IT
+ball = [Ball()] * 5
+for i in range(1, 5):
+    ball[i] = Ball()
 
-animation = ani.FuncAnimation(fig, update_ani, interval=50, frames=500)
+animation = ani.FuncAnimation(fig, update_ani, interval=50, frames=1500)
+animation.save("output.mp4", writer="ffmpeg")
 plt.show()
